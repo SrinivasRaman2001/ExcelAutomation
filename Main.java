@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-             int marks = 0;
+            int marks = 0;
 //        String excelfilepath = ".\\src\\result.xlsx";
 //        FileInputStream fileInputStream = new FileInputStream(excelfilepath);
 //
@@ -57,26 +57,44 @@ public class Main {
                 XSSFRow row1 = worksheet1.getRow(i);
                 XSSFRow row2 = worksheet2.getRow(i);
 
-                String question = "";
-                XSSFCell question1 = row1.getCell(0);
-                if (question1 != null) {
-                    question1.setCellType(CellType.STRING);
-                    question = question1.getStringCellValue();
+                String Question1 = "";
+                XSSFCell Q1 = row1.getCell(0);
+                if (Q1 != null) {
+                    Q1.setCellType(CellType.STRING);
+                    Question1 = Q1.getStringCellValue();
                 }
 
-                String key = "";
-                XSSFCell key1 = row2.getCell(0);
-                if (key1 != null) {
-                    key1.setCellType(CellType.STRING);
-                    key = key1.getStringCellValue();
+                String Key1 = "";
+                XSSFCell K1 = row2.getCell(0);
+                if (K1 != null) {
+                    K1.setCellType(CellType.STRING);
+                    Key1 = K1.getStringCellValue();
                 }
+
+                String Question2 = "";
+                XSSFCell Q2 = row1.getCell(0);
+                if (Q2 != null) {
+                    Q2.setCellType(CellType.STRING);
+                    Question2 = Q2.getStringCellValue();
+                }
+
+                String Key2 = "";
+                XSSFCell K2 = row2.getCell(0);
+                if (K2 != null) {
+                    K2.setCellType(CellType.STRING);
+                    Key2 = K2.getStringCellValue();
+                }
+
             }
         }
 
-        if(worksheet1.getRow(5) == worksheet2.getRow(2)) {
-            marks = marks + 4 ;
-            System.out.println("Marks = " + marks);
-        }
+        if(worksheet1.getRow(16) == worksheet2.getRow(24))
+            marks = marks + 4;
+            System.out.println("marks are " + marks);
+
+        if(worksheet1.getRow(10) == worksheet2.getRow(12))
+            marks = marks + 4;
+            System.out.println("marks are " + marks);
     }
 
 }
