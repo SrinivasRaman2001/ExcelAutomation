@@ -1,100 +1,74 @@
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-            int marks = 0;
-//        String excelfilepath = ".\\src\\result.xlsx";
-//        FileInputStream fileInputStream = new FileInputStream(excelfilepath);
-//
-//        XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
-//        XSSFSheet sheet = workbook.getSheet("Sheet1");
-//
-//        Iterator iterator = sheet.iterator();
-//
-//        while(iterator.hasNext())
-//        {
-//            XSSFRow row = (XSSFRow) iterator.next();
-//            Iterator celliterator =row.cellIterator();
-//
-//            while(celliterator.hasNext())
-//            {
-//               XSSFCell cell= (XSSFCell) celliterator.next();
-//
-//                switch(cell.getCellType())
-//                {
-//                   case STRING:
-//                       System.out.print(cell.getStringCellValue());
-//                       break;
-//                   case NUMERIC:
-//                        System.out.print(cell.getNumericCellValue());
-//                       break;
-//                    case BOOLEAN:
-//                        System.out.print(cell.getBooleanCellValue());
-//                        break;
-//                }System.out.print(" | ");
-//            }
-//        }
-        FileInputStream fileInputStream1 = new FileInputStream(".\\src\\result.xlsx");
-        XSSFWorkbook workbook1 = new XSSFWorkbook(fileInputStream1);
+
+        int marks = 0;
+        Map<Double, Integer> studentResultMap = new HashMap<>();
+
+        FileInputStream studentsresultsstream = new FileInputStream("C:\\Users\\YEMBAR VIMALA\\OneDrive\\Desktop\\Responses.xlsx");
+        XSSFWorkbook workbook1 = new XSSFWorkbook(studentsresultsstream);
         XSSFSheet worksheet1 = workbook1.getSheet("Sheet1");
-        int rowCount1 = worksheet1.getPhysicalNumberOfRows();
 
-        FileInputStream fileInputStream2 = new FileInputStream(".\\src\\Key.xlsx");
-        XSSFWorkbook workbook2 = new XSSFWorkbook(fileInputStream2);
-        XSSFSheet worksheet2 = workbook2.getSheet("Sheet2");
-        int rowCount2 = worksheet2.getPhysicalNumberOfRows();
+        if (worksheet1 != null) {
 
-        if (rowCount1==rowCount2) {
-            for (int i = 1; i < rowCount1; i++){
-                XSSFRow row1 = worksheet1.getRow(i);
-                XSSFRow row2 = worksheet2.getRow(i);
+            int rowCount1 = worksheet1.getPhysicalNumberOfRows();
 
-                String Question1 = "";
-                XSSFCell Q1 = row1.getCell(0);
-                if (Q1 != null) {
-                    Q1.setCellType(CellType.STRING);
-                    Question1 = Q1.getStringCellValue();
+            FileInputStream keyInputStream = new FileInputStream("C:\\Users\\YEMBAR VIMALA\\OneDrive\\Desktop\\Result1.xlsx");
+            XSSFWorkbook workbook2 = new XSSFWorkbook(keyInputStream);
+            XSSFSheet worksheet2 = workbook2.getSheet("Sheet2");
+
+
+                int rowCount2 = worksheet2.getPhysicalNumberOfRows();
+
+                for (int i = 1; i < rowCount2; i++) {
+                    XSSFRow row1 = worksheet2.getRow(i);
+
+                        int physicalNumberOfCellsInResultRow = row1.getPhysicalNumberOfCells();
+                        for (int j = 0; j < physicalNumberOfCellsInResultRow; j++) {
+
+                            XSSFCell resultForQuestionI = row1.getCell(j);
+                            if (resultForQuestionI != null && resultForQuestionI.getCellType().equals(CellType.STRING)) {
+                                String resultStringForQuestion = resultForQuestionI.getStringCellValue();
+
+                                for (int k = 1; k < rowCount1; k++) {
+                                    XSSFRow studentRow = worksheet2.getRow(k);
+                                    XSSFCell enrollmentCell = studentRow.getCell(2);
+
+                                    if (enrollmentCell != null) {
+                                        double studentEnrollmentNr = enrollmentCell.getNumericCellValue();
+                                        XSSFCell cell = studentRow.getCell(j + 4);
+
+                                        if (cell != null) {
+                                            String studentEntry = cell.getStringCellValue();
+                                            if (studentEntry.equals(resultStringForQuestion)) {
+                                                if (studentResultMap.containsKey(studentEnrollmentNr)) {
+                                                    Integer marksOfCurrentStudent = studentResultMap.get(studentEnrollmentNr);
+                                                    marksOfCurrentStudent = marksOfCurrentStudent + 4;
+                                                    studentResultMap.replace(studentEnrollmentNr, marksOfCurrentStudent);
+                                                } else {
+                                                    studentResultMap.put(studentEnrollmentNr, marks + 4);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            MapUtils.debugPrint(System.out, "studentMap", studentResultMap);
+                        }
+                    }
                 }
-
-                String Key1 = "";
-                XSSFCell K1 = row2.getCell(0);
-                if (K1 != null) {
-                    K1.setCellType(CellType.STRING);
-                    Key1 = K1.getStringCellValue();
-                }
-
-                String Question2 = "";
-                XSSFCell Q2 = row1.getCell(0);
-                if (Q2 != null) {
-                    Q2.setCellType(CellType.STRING);
-                    Question2 = Q2.getStringCellValue();
-                }
-
-                String Key2 = "";
-                XSSFCell K2 = row2.getCell(0);
-                if (K2 != null) {
-                    K2.setCellType(CellType.STRING);
-                    Key2 = K2.getStringCellValue();
-                }
-
             }
         }
 
-        if(worksheet1.getRow(16) == worksheet2.getRow(24))
-            marks = marks + 4;
-            System.out.println("marks are " + marks);
-
-        if(worksheet1.getRow(10) == worksheet2.getRow(12))
-            marks = marks + 4;
-            System.out.println("marks are " + marks);
-    }
-
-}
